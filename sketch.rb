@@ -1,4 +1,20 @@
+COLORS = {
+  'red'    => "\e[31m●\e[0m",
+  'green'  => "\e[32m●\e[0m",
+  'blue'   => "\e[34m●\e[0m",
+  'yellow' => "\e[33m●\e[0m",
+  'purple' => "\e[35m●\e[0m",
+  'orange' => "\e[38;5;208m●\e[0m",
+  'empty'  => "○"
+}.freeze
+
 class Game
+  def initialize(board)
+    @board = board
+  end
+
+  def start
+  end
 end
 
 class Player
@@ -13,18 +29,18 @@ class Board
   def make_holes(holes)
     total_holes = []
     holes.times do
-      total_holes << Hole.new('empty', '')
+      total_holes << Hole.new('empty')
     end
     total_holes
   end
-
-  Hole = Struct.new(:state, :value) do 
-    def update_value(data) # expects data = {value: x, state: x}
-      self.value = data.fetch(:value) # throw exception if key not found (fetch)
+  
+  Hole = Struct.new(:state) do 
+    def update_state(state)
+      self.state = COLORS.fetch(state)
     end
-
-    def update_state(data)
-      self.state = data.fetch(:state)
+    
+    def print
+      
     end
   end
 end
