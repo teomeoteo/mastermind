@@ -27,8 +27,13 @@ class Game
         color = player.input
         row.holes[i].update_state(color)
         print ("\n")
+        board.feedback.holes[i].state = row.holes[i].state
         board.render
       end
+      board.feedback.pointer = true
+      board.feedback.check_holes(secret_code)
+      print "\n"
+      board.render
       row.pointer = false
     end
   end
@@ -93,6 +98,10 @@ class Row
     def render
       if (self.state == 'empty')
         print "○ "
+      elsif (self.state == 'match')
+        print "\e[97m●\e[0m "
+      elsif (self.state == 'exists')
+        print "\e[97m◎\e[0m "
       else
         print "#{COLORS[self.state]} "
       end
@@ -120,16 +129,37 @@ class Board
 end
 
 class Feedback < Row
+  attr_accessor :holes, :pointer
+  def initialize(hole_count)
+    @holes = make(hole_count.to_int)
+    @pointer = false
+  end
   def render
     holes.each do |hole|
       hole.render
     end
+    if (pointer)
+      print " <---"
+    end
     print "\n"
     puts "-------"
+  end
+
+  def check_holes(code)
+    holes.each_with_index do |hole, index|
+      if (hole.state == code[index])
+        hole.update_state('match')
+      elsif (code.include?(hole.state))
+        hole.update_state('exists')
+      else
+        hole.update_state('empty')
+      end
+    end
   end
 end
 
 game = Game.new(Board.new)
 # game.board.render
 feedback = Feedback.new(4)
+p game.secret_code
 game.start
