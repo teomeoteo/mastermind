@@ -22,24 +22,30 @@ class Game
       row.pointer = true
       board.length.times do |i|
         puts "Enter a color"
-        puts "(red, green, blue, yellow, purple orange)"
+        puts "(red, green, blue, yellow, purple, orange)"
         print "\n"
         color = player.input
         row.holes[i].update_state(color)
         print ("\n")
-        board.feedback.holes[i].state = row.holes[i].state
-        board.render
+        if (i < 3) 
+          board.render
+        end
+        # p secret_code
       end
       board.feedback.pointer = true
-      board.feedback.check_holes(secret_code)
       print "\n"
       board.render
+      board.feedback.pointer = false
       row.pointer = false
     end
   end
 
   def set_code
-    COLORS.keys.sample(board.rows[0].holes.length)
+    code = []
+    board.length.times do
+      code << COLORS.keys.sample
+    end
+    code
   end
 
   def check
@@ -82,12 +88,7 @@ class Row
     end
     if (pointer)
       print " <---"
-      print " Colors: "
-      COLORS.each do |color, value|
-        print value + " "
-      end
     end
-    print "\n"
   end
 
   Hole = Struct.new(:state) do 
@@ -120,46 +121,30 @@ class Board
     feedback.render
     rows.each do |row|
       row.render
+      print "\n"
     end
   end
 
   def make
     Array.new(12) {Row.new(4)}
   end
+
 end
 
 class Feedback < Row
-  attr_accessor :holes, :pointer
-  def initialize(hole_count)
-    @holes = make(hole_count.to_int)
-    @pointer = false
-  end
   def render
     holes.each do |hole|
       hole.render
     end
     if (pointer)
-      print " <---"
+      print " <--- Feedback"
     end
     print "\n"
     puts "-------"
-  end
-
-  def check_holes(code)
-    holes.each_with_index do |hole, index|
-      if (hole.state == code[index])
-        hole.update_state('match')
-      elsif (code.include?(hole.state))
-        hole.update_state('exists')
-      else
-        hole.update_state('empty')
-      end
-    end
   end
 end
 
 game = Game.new(Board.new)
 # game.board.render
 feedback = Feedback.new(4)
-p game.secret_code
 game.start
