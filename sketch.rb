@@ -62,10 +62,12 @@ class Game
       if (color == code[index])
         guesses_sorted << 'match'
         code[index] = 'done'
+        current_row[index] = 'done'
       end
     end
 
     current_row.each do |color|
+      next if color == 'done'
       if (code.include?(color))
         guesses_sorted << 'exists'
         code[code.find_index(color)] = 'done' # order doesn't matter for this step
