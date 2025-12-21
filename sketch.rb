@@ -15,27 +15,32 @@ class Game
     @player = player
   end
 
+  # input for current row
+  def get_input(row)
+    board.feedback.pointer = false
+    num = row.holes.length
+    Array.new(num) do |i|
+      color = player.input
+      row.holes[i].update_state(color)
+      print ("\n")
+      if (i == num - 1)
+        board.feedback.pointer = true
+        sorted_guesses = feedback_sort(row)
+        board.feedback.holes.each_with_index do |hole, index|
+          hole.update_state(sorted_guesses[index])
+        end
+      end
+      p secret_code
+      board.render
+    end
+  end
+
   def start
-    board.rows[0].pointer = true
+    board.rows[0].pointer = true # starting row
     board.render
     board.rows.each do |row|
       row.pointer = true
-      board.length.times do |i|
-        puts "Enter a color"
-        puts "(red, green, blue, yellow, purple, orange)"
-        print "\n"
-        color = player.input
-        row.holes[i].update_state(color)
-        print ("\n")
-        if (i < 3) 
-          board.render
-        end
-        # p secret_code
-      end
-      board.feedback.pointer = true
-      print "\n"
-      board.render
-      board.feedback.pointer = false
+      get_input(row)
       row.pointer = false
     end
   end
@@ -48,12 +53,71 @@ class Game
     code
   end
 
-  def check
+  def feedback_sort(row)
+    current_row = row.holes.map { |hole| hole.state }
+    code = secret_code.dup
+    guess_exists = 0
+    valid_exists_count = 0
+    p code
+    
+    guesses = row.holes.map { |hole| hole.state }.map.with_index do |color, index|
+      if (code.include?(color))
+        if (color == code[index])
+          code[index] = 'done'
+          'match'
+        else
+          guess_exists += 1
+          'exists'
+        end
+      else
+        'empty'
+      end
+    end
+
+    valid_exists = current_row.map do |color|
+      if (code.include?(color))
+        code[code.find_index(color)] = 'done'
+        valid_exists_count += 1
+        'exists'
+      else
+        'empty'
+      end
+    end
+    
+    exists_for_deletion = guess_exists - valid_exists_count
+    while (exists_for_deletion > 0)
+      guesses[guesses.find_index('exists')] = 'empty'
+      exists_for_deletion -= 1
+    end
+
+    p guesses
+    p valid_exists
+  
+    sorted_guesses = []
+
+    guesses.each do |color|
+      if (color == 'exists')
+        sorted_guesses << color
+      elsif (color == 'match')
+        sorted_guesses.unshift(color)
+      end
+    end
+
+    guesses.each do |color|
+      if (color == 'empty')
+        sorted_guesses << color
+      end
+    end
+
+    sorted_guesses
   end
 end
 
 class Player
   def input
+    puts "Enter a color"
+    puts "(red, green, blue, yellow, purple, orange)"
+    print "\n"
     color = ''
     loop do
       color = gets.chomp.to_s.downcase
@@ -128,7 +192,6 @@ class Board
   def make
     Array.new(12) {Row.new(4)}
   end
-
 end
 
 class Feedback < Row
@@ -146,5 +209,4 @@ end
 
 game = Game.new(Board.new)
 # game.board.render
-feedback = Feedback.new(4)
 game.start
