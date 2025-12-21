@@ -54,62 +54,28 @@ class Game
   end
 
   def feedback_sort(row)
-    current_row = row.holes.map { |hole| hole.state }
     code = secret_code.dup
-    guess_exists = 0
-    valid_exists_count = 0
-    p code
-    
-    guesses = row.holes.map { |hole| hole.state }.map.with_index do |color, index|
-      if (code.include?(color))
-        if (color == code[index])
-          code[index] = 'done'
-          'match'
-        else
-          guess_exists += 1
-          'exists'
-        end
-      else
-        'empty'
+    guesses_sorted = []
+    current_row = row.holes.map { |hole| hole.state }
+
+    current_row.each_with_index do |color, index|
+      if (color == code[index])
+        guesses_sorted << 'match'
+        code[index] = 'done'
       end
     end
 
-    valid_exists = current_row.map do |color|
+    current_row.each do |color|
       if (code.include?(color))
-        code[code.find_index(color)] = 'done'
-        valid_exists_count += 1
-        'exists'
-      else
-        'empty'
+        guesses_sorted << 'exists'
+        code[code.find_index(color)] = 'done' # order doesn't matter for this step
       end
     end
     
-    exists_for_deletion = guess_exists - valid_exists_count
-    while (exists_for_deletion > 0)
-      guesses[guesses.find_index('exists')] = 'empty'
-      exists_for_deletion -= 1
+    while (guesses_sorted.length < 4)
+      guesses_sorted << 'empty'
     end
-
-    p guesses
-    p valid_exists
-  
-    sorted_guesses = []
-
-    guesses.each do |color|
-      if (color == 'exists')
-        sorted_guesses << color
-      elsif (color == 'match')
-        sorted_guesses.unshift(color)
-      end
-    end
-
-    guesses.each do |color|
-      if (color == 'empty')
-        sorted_guesses << color
-      end
-    end
-
-    sorted_guesses
+    guesses_sorted
   end
 end
 
