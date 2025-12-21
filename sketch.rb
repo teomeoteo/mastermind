@@ -42,7 +42,13 @@ class Game
       row.pointer = true
       get_input(row)
       row.pointer = false
+      if (row.holes.map { |hole| hole.state } == secret_code)
+        puts "You won!"
+        return
+      end
     end
+    puts "You lost"
+    puts "The correct code was #{secret_code}"
   end
 
   def set_code
