@@ -1,0 +1,3 @@
+#!/usr/bin/env ruby
+
+require '/Users/theoeliott/Ruby/projects/mastermind/lib/main'
