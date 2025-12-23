@@ -37,20 +37,18 @@ The engine provides hints using a specialized symbol system to help you crack th
 
 ---
 
-## 🎨 Color Palette & ANSI Values
+## 🎨 Color Palette Reference
 
-The engine renders the following colors using ANSI escape codes. These are the strings recognized by the input parser:
+The engine identifies these colors. In the terminal, they render as colored dots; in this documentation, we represent them via math symbols:
 
-| Color | ANSI Escape Code | Terminal Output Example |
-| :--- | :--- | :--- |
-| **Red** | `\e[31m` | <span style="color:red">■</span> |
-| **Green** | `\e[32m` | <span style="color:green">■</span> |
-| **Blue** | `\e[34m` | <span style="color:blue">■</span> |
-| **Yellow** | `\e[33m` | <span style="color:yellow">■</span> |
-| **Purple** | `\e[35m` | <span style="color:purple">■</span> |
-| **Orange** | `\e[38;5;208m` | <span style="color:orange">■</span> |
-
-*Note: Use `\e[0m` to reset formatting after printing.*
+| Color | Input String | Terminal Code | README Preview |
+| :--- | :--- | :--- | :--- |
+| **Red** | `red` | `\e[31m` | $\color{#ff0000}{\Large\bullet}$ |
+| **Green** | `green` | `\e[32m` | $\color{#00ff00}{\Large\bullet}$ |
+| **Blue** | `blue` | `\e[38;5;21m` | $\color{#0000ff}{\Large\bullet}$ |
+| **Yellow** | `yellow` | `\e[33m` | $\color{#ffff00}{\Large\bullet}$ |
+| **Purple** | `purple` | `\e[38;5;57m` | $\color{#8000ff}{\Large\bullet}$ |
+| **Orange** | `orange` | `\e[38;5;208m` | $\color{#ff8700}{\Large\bullet}$ |
 
 ---
 
@@ -61,3 +59,4 @@ The game is designed to be run as a standalone binary from the console.
 1. **Permissions:** Navigate to your project directory and grant execution permissions to the file in the `/bin` destination:
    ```bash
    chmod +x bin/mastermind
+
